@@ -1,9 +1,4 @@
-name: Release & Publish Docker Image
-
-on:
-  push:
-    branches:
-      - main
+name: Tag the repository
 
 permissions:
   contents: write     # For git tag + changelog commit
@@ -11,6 +6,8 @@ permissions:
 jobs:
   release-and-publish:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.semrel.outputs.version }}
 
     steps:
       - name: Checkout code
@@ -31,9 +28,6 @@ jobs:
       - name: Generate GitHub App token
         id: app-token
         uses: tibdex/github-app-token@v2
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Configure Git user
         run: |
@@ -43,6 +37,7 @@ jobs:
       - name: Run semantic-release
         id: semrel
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          semantic-release version --provider github
+          VERSION=$(semantic-release version --provider github)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT

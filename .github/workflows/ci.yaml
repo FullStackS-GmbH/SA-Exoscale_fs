@@ -1,0 +1,15 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  release:
+#    needs: test
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/build.yml
+    # Optional: pass a PAT/App token if you need workflow-triggering behavior
+    # secrets:
+    #   token: ${{ secrets.RELEASE_TOKEN }}
