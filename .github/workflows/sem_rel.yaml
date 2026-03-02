@@ -55,5 +55,6 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="$(semantic-release version --provider "${{ inputs.provider }}" | tr -d '\n' || true)"
+          echo "$VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Released version: ${VERSION:-<none>}"
