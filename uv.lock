@@ -1372,7 +1372,6 @@ source = { virtual = "." }
 dependencies = [
     { name = "exoscale" },
     { name = "solnlib" },
-    { name = "splunk-add-on-ucc-framework", extra = ["validate"] },
     { name = "splunk-sdk" },
     { name = "splunktaucclib" },
 ]
@@ -1392,7 +1391,6 @@ dev = [
 requires-dist = [
     { name = "exoscale", specifier = ">=0.16.1" },
     { name = "solnlib", specifier = ">=7.0.0" },
-    { name = "splunk-add-on-ucc-framework", extras = ["validate"], specifier = ">=6.1.0" },
     { name = "splunk-sdk", specifier = ">=2.1.1" },
     { name = "splunktaucclib", specifier = ">=8.1.0" },
 ]
