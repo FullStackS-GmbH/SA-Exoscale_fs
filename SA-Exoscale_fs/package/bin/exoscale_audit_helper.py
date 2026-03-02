@@ -2,7 +2,6 @@ import datetime
 import json
 import logging
 
-import import_declare_test
 from solnlib import conf_manager, log
 from solnlib.modular_input import checkpointer
 from splunklib import modularinput as smi
