@@ -37,7 +37,7 @@ jobs:
       - name: Build Add-on
         run: |
           mkdir -p dist
-          uv run ucc-gen build --source "${{ inputs.artifact_addon_name}}" --ta-version "${{inputs.version }}" -o dist
+          uv run ucc-gen build --source "${{ inputs.artifact_addon_name}}/package" --ta-version "${{inputs.version }}" -o dist
 
       - name: Validate the Add-on
         run: |
