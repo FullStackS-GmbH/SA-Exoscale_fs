@@ -10,6 +10,12 @@ jobs:
   semver:
     uses: ./.github/workflows/sem_rel.yaml
 
+  debug:
+    needs: semver
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "VERSION='${{ needs.semver.outputs.version }}'"
+
   build:
     needs: semver
     uses: ./.github/workflows/setup_repository.yaml

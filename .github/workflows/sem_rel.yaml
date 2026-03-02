@@ -56,4 +56,4 @@ jobs:
           set -euo pipefail
           export VERSION=$(semantic-release --dry | grep 'new version' | sed -E 's/.* ([[:digit:].]+)$/\1/')
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          semantic-release version --provider "${{ inputs.provider }}" | tr -d '\n' || true
+          semantic-release version --provider "${{ inputs.provider }}"
