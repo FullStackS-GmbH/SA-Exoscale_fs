@@ -273,7 +273,7 @@
     "meta": {
         "name": "SA-Exoscale_fs",
         "restRoot": "SA-Exoscale_fs",
-        "version": "0.0.1",
+        "version": "0.0.0",
         "displayName": "FULLSTACKS Add-on for Exoscale",
         "schemaVersion": "0.0.10",
         "supportedThemes": [

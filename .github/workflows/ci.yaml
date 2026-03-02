@@ -7,14 +7,12 @@ on:
 
 
 jobs:
-  semantic_release:
-    #    needs: test
+  semver:
     uses: ./.github/workflows/sem_rel.yaml
-    # Optional: pass a PAT/App token if you need workflow-triggering behavior
-    # secrets:
-    #   token: ${{ secrets.RELEASE_TOKEN }}
 
-
-  test:
-    needs: semantic_release
-    uses: ./.github/workflows/test.yaml
+  build:
+    needs: semver
+    uses: ./.github/workflows/setup_repository.yaml
+    with:
+      version: ${{ needs.semver.outputs.version }}
+      artifact_addon_name: SA-Exoscale_fs
