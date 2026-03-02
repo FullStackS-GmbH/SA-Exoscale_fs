@@ -1,0 +1,59 @@
+name: Semantic Release
+
+on:
+  workflow_call:
+    inputs:
+      go_version:
+        type: string
+        default: "1.22"
+      provider:
+        type: string
+        default: "github"
+    outputs:
+      version:
+        description: "Released version (empty if none)"
+        value: ${{ jobs.release.outputs.version }}
+    secrets:
+      token:
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.semrel.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ inputs.go_version }}
+
+      - name: Install go-semantic-release
+        run: |
+          go install github.com/go-semantic-release/semantic-release/v2/cmd/semantic-release@latest
+          echo "${HOME}/go/bin" >> $GITHUB_PATH
+
+      - name: Configure Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run semantic-release and expose version
+        id: semrel
+        env:
+          # Prefer a passed-in token (PAT/App token). Fallback to GITHUB_TOKEN.
+          GITHUB_TOKEN: ${{ secrets.token || github.token }}
+        run: |
+          set -euo pipefail
+          VERSION="$(semantic-release version --provider "${{ inputs.provider }}" | tr -d '\n' || true)"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Released version: ${VERSION:-<none>}"

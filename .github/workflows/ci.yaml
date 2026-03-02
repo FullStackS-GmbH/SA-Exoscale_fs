@@ -7,9 +7,14 @@ on:
 
 
 jobs:
-  release:
-#    needs: test
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/build.yaml@v1
+  semantic_release:
+    #    needs: test
+    uses: ./.github/workflows/sem_rel.yaml
     # Optional: pass a PAT/App token if you need workflow-triggering behavior
     # secrets:
     #   token: ${{ secrets.RELEASE_TOKEN }}
+
+
+  test:
+    needs: semantic_release
+    uses: ./.github/workflows/test.yaml
