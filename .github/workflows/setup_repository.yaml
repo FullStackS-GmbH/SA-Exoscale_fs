@@ -37,11 +37,11 @@ jobs:
       - name: Build Add-on
         run: |
           mkdir -p dist
-          ucc-gen build --source "${{ inputs.artifact_addon_name}}" --ta-version "${{inputs.version }}" -o dist
+          uv run ucc-gen build --source "${{ inputs.artifact_addon_name}}" --ta-version "${{inputs.version }}" -o dist
 
       - name: Validate the Add-on
         run: |
-          ucc-gen validate --addon-path dist/"${{ inputs.artifact_addon_name}}" | tee appinspect.txt
+          uv run ucc-gen validate --addon-path dist/"${{ inputs.artifact_addon_name}}" | tee appinspect.txt
 
       - name: Clean up of appinspect
         run: |
@@ -52,7 +52,7 @@ jobs:
 
       - name: Package the Add-on
         run: |
-          ucc-gen package --path dist/"${{ inputs.artifact_addon_name}}" -o output
+          uv run ucc-gen package --path dist/"${{ inputs.artifact_addon_name}}" -o output
 
       - name: Upload built add-on
         uses: actions/upload-artifact@v4
