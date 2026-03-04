@@ -41,15 +41,7 @@ jobs:
 
       - name: Validate the Add-on
         run: |
-          uv run ucc-gen validate --addon-path dist/${{ inputs.artifact_addon_name}} | tee unformatted_appinspect.txt
-
-      - name: Clean up of appinspect
-        run: |
-          awk -v app="${{ inputs.artifact_addon_name}}" '
-              $0 ~ app " Report Summary:" {found=1}
-              found
-          ' "unformatted_appinspect.txt" > "appinspect.txt"
-          cat appinspect.txt
+          uv run ucc-gen validate --addon-path dist/${{ inputs.artifact_addon_name}} | tee appinspect.txt
 
       - name: Package the Add-on
         run: |
