@@ -1,6 +1,8 @@
 on:
   workflow_call:
     inputs:
+      version:
+        type: string
       go_version:
         type: string
         default: "1.22"
@@ -57,10 +59,10 @@ jobs:
       - name: Upload release assets (add-on + report)
         if: success()
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # semantic-release creates/pushes the tag; grab latest tag (works for typical flows)
-          TAG="$(git describe --tags --abbrev=0)"
-          echo "Uploading assets to $TAG"
+          ls -R release-assets
+          echo "Uploading assets to ${{ inputs.version }}"
 
-          gh release upload "$TAG" release-assets/output/* release-assets/appinspect.txt --clobber
+          gh release upload ${{ inputs.version }}  release-assets/output/* release-assets/appinspect.txt --clobber
