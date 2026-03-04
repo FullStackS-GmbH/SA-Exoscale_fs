@@ -7,7 +7,7 @@ on:
 
 jobs:
   semver:
-    uses: ./.github/workflows/sem_ver.yaml
+    uses: ./.github/workflows/semver.yaml
 
   build:
     needs: semver
