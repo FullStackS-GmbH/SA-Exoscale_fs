@@ -36,7 +36,7 @@ jobs:
 
       - name: pre-commit
         run: |
-          pre-commit run --all-flies
+          uv run pre-commit run --all-flies
 
       - name: Build Add-on
         run: |
