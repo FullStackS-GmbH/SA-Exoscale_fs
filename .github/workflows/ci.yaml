@@ -7,7 +7,7 @@ on:
 
 jobs:
   semver:
-    uses: ./.github/workflows/semver.yaml
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/semver.yaml
 
   build:
     needs: semver
@@ -15,7 +15,7 @@ jobs:
     with:
       version: ${{ needs.semver.outputs.version }}
       artifact_addon_name: ${{ vars.ADDON_NAME }}
-      artifact_report_name: ${{ vars.REPORT_NAME }}
+      artifact_report_name: appinspect.txt
 
   release:
     needs: [semver, build]
