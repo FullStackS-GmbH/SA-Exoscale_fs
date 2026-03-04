@@ -5,20 +5,26 @@ on:
     branches:
       - main
 
+env:
+  addon_name: SA-Exoscale_fs
+  report_name: splunk-appinspect.txt
 
 jobs:
   semver:
-    uses: ./.github/workflows/sem_rel.yaml
-
-  debug:
-    needs: semver
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "VERSION='${{ needs.semver.outputs.version }}'"
+    uses: ./.github/workflows/sem_ver.yaml
 
   build:
     needs: semver
-    uses: ./.github/workflows/setup_repository.yaml
+    uses: ./.github/workflows/build.yaml
     with:
       version: ${{ needs.semver.outputs.version }}
-      artifact_addon_name: SA-Exoscale_fs
+      artifact_addon_name: ${{ env.addon_name }}
+      artifact_report_name: ${{ env.report_name }}
+
+  release:
+    needs: [semver, build]
+    uses: ./.github/workflows/release.yaml
+    with:
+      version: ${{ needs.semver.outputs.version }}
+      artifact_addon_name: ${{ env.addon_name }}
+      artifact_report_name: ${{ env.report_name }}

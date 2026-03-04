@@ -1,4 +1,4 @@
-name: Python UV - Lint & Tests
+name: Build the Add-on and run tests
 
 on:
   workflow_call:
@@ -58,11 +58,7 @@ jobs:
       - name: Upload built add-on
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.artifact_addon_name }}
-          path: output/*
-
-      - name: Upload validation report
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ inputs.artifact_report_name }}
-          path: appinspect.txt
+          name: release-assets
+          path: |
+            output/*
+            appinspect.txt

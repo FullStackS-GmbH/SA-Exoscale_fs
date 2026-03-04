@@ -1,4 +1,4 @@
-name: Semantic Release
+name: Semantic Versioning
 
 on:
   workflow_call:
@@ -47,7 +47,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Run semantic-release and expose version
+      - name: Run semantic-release to get new version
         id: semrel
         env:
           # Prefer a passed-in token (PAT/App token). Fallback to GITHUB_TOKEN.
@@ -61,4 +61,4 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           # real release
-          semantic-release --provider "${{ inputs.provider }}"
+#          semantic-release --provider "${{ inputs.provider }}"

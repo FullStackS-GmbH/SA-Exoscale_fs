@@ -1,0 +1,69 @@
+on:
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: true
+      artifact_addon_name:
+        type: string
+        default: "ucc-addon"
+      artifact_report_name:
+        type: string
+        default: "splunk-validation-report"
+
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.semrel.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download build outputs from Build workflow run
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ github.event.workflow_run.id }}
+          name: release-assets
+          path: release-assets
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ inputs.go_version }}
+
+      - name: Install go-semantic-release
+        run: |
+          go install github.com/go-semantic-release/semantic-release/v2/cmd/semantic-release@latest
+          echo "${HOME}/go/bin" >> $GITHUB_PATH
+
+      - name: Configure Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run semantic-release to get new version
+        id: semrel
+        env:
+          # Prefer a passed-in token (PAT/App token). Fallback to GITHUB_TOKEN.
+          GITHUB_TOKEN: ${{ secrets.token || github.token }}
+        run: |
+          semantic-release --provider "${{ inputs.provider }}"
+
+#      - name: Upload release assets (add-on + report)
+#        if: success()
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          # semantic-release creates/pushes the tag; grab latest tag (works for typical flows)
+#          TAG="$(git describe --tags --abbrev=0)"
+#          echo "Uploading assets to $TAG"
+#
+#          gh release upload "$TAG" output/* appinspect.txt --clobber
