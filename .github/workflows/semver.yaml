@@ -5,7 +5,7 @@ on:
     inputs:
       go_version:
         type: string
-        default: "1.22"
+        default: "1.23"
 
       # "main" => compute the next real semver (must succeed)
       # "pr"   => compute a preview version for PR builds (always succeeds)

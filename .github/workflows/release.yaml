@@ -34,7 +34,7 @@ on:
 
       go_version:
         type: string
-        default: "1.22"
+        default: "1.23"
 
       provider:
         type: string
