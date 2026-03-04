@@ -1,0 +1,50 @@
+name: PR Preview (draft release)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+permissions:
+  contents: write   # needed to create/update releases
+  pull-requests: write
+
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  semver:
+    uses: ./.github/workflows/semver.yaml
+    with:
+      mode: pr
+      pr_number: ${{ github.event.pull_request.number }}
+      sha: ${{ github.sha }}
+
+  build:
+    needs: semver
+    uses: ./.github/workflows/build.yaml
+    with:
+      version: ${{ needs.semver.outputs.version }}
+      artifact_addon_name: ${{ vars.ADDON_NAME }}
+      artifact_report_name: ${{ vars.REPORT_NAME }}
+
+  release:
+    needs: [semver, build]
+    uses: ./.github/workflows/release.yaml
+    with:
+      version: ${{ needs.semver.outputs.version }}
+      draft: true
+      prerelease: true
+      # optional but recommended so each PR has a stable tag:
+      tag: pr-${{ github.event.pull_request.number }}
+      target_commitish: ${{ github.sha }}
+      mode: pr
+
+  pr_release_comment:
+    needs: [ semver, build, release ]
+    uses: ./.github/workflows/pr_release_comment.yaml
+    with:
+      tag: pr-${{ github.event.pull_request.number }}
+      version: ${{ needs.semver.outputs.version }}
+      pr_number: ${{ github.event.pull_request.number }}
