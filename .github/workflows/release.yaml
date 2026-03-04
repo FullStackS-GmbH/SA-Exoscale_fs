@@ -1,14 +1,37 @@
+name: Release
+
 on:
   workflow_call:
     inputs:
       version:
         type: string
+        required: true
       go_version:
         type: string
         default: "1.22"
+
       provider:
         type: string
         default: "github"
+      mode:
+        type: string
+        default: "main"
+      tag:
+        type: string
+        required: false
+      release_name:
+        type: string
+        required: false
+      target_commitish:
+        type: string
+        required: false
+      draft:
+        type: boolean
+        default: false
+      prerelease:
+        type: boolean
+        default: false
+
     secrets:
       token:
         required: false
@@ -26,44 +49,124 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download build outputs from Build workflow run
+      - name: Download build outputs (release-assets)
         uses: actions/download-artifact@v4
         with:
-          run-id: ${{ github.event.workflow_run.id }}
           name: release-assets
           path: release-assets
 
+      # ----------------------------
+      # MAIN MODE: real release flow
+      # ----------------------------
       - name: Set up Go
+        if: ${{ inputs.mode == 'main' }}
         uses: actions/setup-go@v5
         with:
           go-version: ${{ inputs.go_version }}
 
       - name: Install go-semantic-release
+        if: ${{ inputs.mode == 'main' }}
         run: |
+          set -euo pipefail
           go install github.com/go-semantic-release/semantic-release/v2/cmd/semantic-release@latest
           echo "${HOME}/go/bin" >> $GITHUB_PATH
 
       - name: Configure Git user
+        if: ${{ inputs.mode == 'main' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Run semantic-release to get new version
-        id: semrel
+      - name: Run semantic-release (creates tag + GitHub release)
+        if: ${{ inputs.mode == 'main' }}
         env:
-          # Prefer a passed-in token (PAT/App token). Fallback to GITHUB_TOKEN.
           GITHUB_TOKEN: ${{ secrets.token || github.token }}
         run: |
+          set -euo pipefail
           semantic-release --provider "${{ inputs.provider }}"
 
-      - name: Upload release assets (add-on + report)
-        if: success()
+      # ----------------------------
+      # PR MODE: draft prerelease flow
+      # ----------------------------
+      - name: Create/Update draft prerelease (PR mode)
+        if: ${{ inputs.mode == 'pr' }}
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.token || github.token }}
         run: |
-          # semantic-release creates/pushes the tag; grab latest tag (works for typical flows)
-          ls -R release-assets
-          cat release-assets/appinspect.txt
-          echo "Uploading assets to v${{ inputs.version }}"
+          set -euo pipefail
 
-          gh release upload v${{ inputs.version }} release-assets/output/* release-assets/appinspect.txt --clobber
+          TAG="${{ inputs.tag }}"
+          if [[ -z "${TAG:-}" ]]; then
+            # Strongly recommended: caller sets a stable tag like "pr-123"
+            echo "inputs.tag is required for mode=pr (e.g. tag: pr-<number>)" >&2
+            exit 1
+          fi
+
+          NAME="${{ inputs.release_name }}"
+          if [[ -z "${NAME:-}" ]]; then
+            NAME="PR Preview - ${{ inputs.version }}"
+          fi
+
+          TARGET="${{ inputs.target_commitish }}"
+          if [[ -z "${TARGET:-}" ]]; then
+            TARGET="${GITHUB_SHA}"
+          fi
+
+          DRAFT_FLAG="--draft"
+          if [[ "${{ inputs.draft }}" != "true" ]]; then
+            DRAFT_FLAG="--draft=false"
+          fi
+
+          PRERELEASE_FLAG="--prerelease"
+          if [[ "${{ inputs.prerelease }}" != "true" ]]; then
+            PRERELEASE_FLAG="--prerelease=false"
+          fi
+
+          echo "Ensuring release exists for tag: ${TAG}"
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            echo "Release exists; updating metadata"
+            gh release edit "${TAG}" \
+              --title "${NAME}" \
+              --target "${TARGET}" \
+              ${DRAFT_FLAG} \
+              ${PRERELEASE_FLAG}
+          else
+            echo "Release does not exist; creating"
+            gh release create "${TAG}" \
+              --title "${NAME}" \
+              --target "${TARGET}" \
+              ${DRAFT_FLAG} \
+              ${PRERELEASE_FLAG} \
+              --notes "Automated PR preview release for ${TAG} (${TARGET})."
+          fi
+
+      # ----------------------------
+      # Upload assets (both modes)
+      # ----------------------------
+      - name: Upload release assets (add-on + report)
+        if: ${{ success() }}
+        env:
+          GH_TOKEN: ${{ secrets.token || github.token }}
+        run: |
+          set -euo pipefail
+
+          ls -R release-assets || true
+
+          # Choose the tag to upload to:
+          # - main mode: semantic-release typically tags v<version>
+          # - pr mode: use the provided stable tag (e.g. pr-123)
+          if [[ "${{ inputs.mode }}" == "pr" ]]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="v${{ inputs.version }}"
+          fi
+
+          echo "Uploading assets to ${TAG}"
+
+          # Adjust paths as needed; keep your current ones:
+          # - release-assets/output/*  (primary artifacts)
+          # - release-assets/appinspect.txt (extra report)
+          gh release upload "${TAG}" \
+            release-assets/output/* \
+            release-assets/appinspect.txt \
+            --clobber
