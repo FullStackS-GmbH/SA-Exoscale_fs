@@ -46,6 +46,15 @@ jobs:
       - name: Validate the Add-on
         run: |
           uv run ucc-gen validate --addon-path dist/${{ inputs.artifact_addon_name}} | tee appinspect.txt
+          FILE="appinspect.txt"
+
+          if grep -q "error:[[:space:]]*0" "$FILE" && grep -q "failure:[[:space:]]*0" "$FILE"; then
+            echo "AppInspect passed (no errors or failures)."
+          else
+            echo "AppInspect failed:"
+            grep -E "error:|failure:" "$FILE" || true
+            exit 1
+          fi
 
       - name: Package the Add-on
         run: |
