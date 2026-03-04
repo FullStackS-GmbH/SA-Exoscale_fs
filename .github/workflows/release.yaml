@@ -63,6 +63,7 @@ jobs:
         run: |
           # semantic-release creates/pushes the tag; grab latest tag (works for typical flows)
           ls -R release-assets
-          echo "Uploading assets to ${{ inputs.version }}"
+          cat release-assets/appinspect.txt
+          echo "Uploading assets to v${{ inputs.version }}"
 
           gh release upload v${{ inputs.version }} release-assets/output/* release-assets/appinspect.txt --clobber
