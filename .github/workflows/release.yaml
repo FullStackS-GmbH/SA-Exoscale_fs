@@ -7,13 +7,11 @@ on:
         type: string
         required: true
 
-      # main => run semantic-release
-      # pr   => draft prerelease with stable tag
       mode:
         type: string
-        default: "main"
+        default: "main" # "main" or "pr"
 
-      # PR mode: stable tag, e.g. "pr-123"
+      # PR mode stable tag, e.g. pr-123
       tag:
         type: string
         required: false
@@ -46,14 +44,6 @@ on:
         type: string
         default: "release-assets"
 
-    outputs:
-      release_url:
-        description: "HTML URL of the created/updated release"
-        value: ${{ jobs.release.outputs.release_url }}
-      release_tag:
-        description: "Tag used for the release"
-        value: ${{ jobs.release.outputs.release_tag }}
-
     secrets:
       token:
         required: false
@@ -64,9 +54,6 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    outputs:
-      release_url: ${{ steps.out.outputs.release_url }}
-      release_tag: ${{ steps.out.outputs.release_tag }}
 
     steps:
       - name: Checkout
@@ -79,6 +66,74 @@ jobs:
         with:
           name: ${{ inputs.artifact_name }}
           path: release-assets
+
+      # ----------------------------
+      # PR MODE: delete old + create new with stable tag
+      # ----------------------------
+      - name: Create PR draft release (stable tag)
+        if: ${{ inputs.mode == 'pr' }}
+        env:
+          GH_TOKEN: ${{ secrets.token || github.token }}
+        run: |
+          set -euo pipefail
+
+          TAG="${{ inputs.tag }}"
+          if [[ -z "${TAG:-}" ]]; then
+            echo "mode=pr requires inputs.tag (e.g. pr-<number>)" >&2
+            exit 1
+          fi
+
+          NAME="${{ inputs.release_name }}"
+          if [[ -z "${NAME:-}" ]]; then
+            NAME="PR Preview – ${{ inputs.version }}"
+          fi
+
+          TARGET="${{ inputs.target_commitish }}"
+          if [[ -z "${TARGET:-}" ]]; then
+            TARGET="${GITHUB_SHA}"
+          fi
+
+          echo "Replacing PR release: ${TAG}"
+
+          # Delete existing release for this tag (and its assets)
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            gh release delete "${TAG}" -y
+          fi
+
+          # Delete remote git tag if it exists (optional, but keeps it clean)
+          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${TAG}" >/dev/null 2>&1; then
+            gh api -X DELETE "repos/${GITHUB_REPOSITORY}/git/refs/tags/${TAG}" >/dev/null
+          fi
+
+          # Build flags (NO --draft=true style!)
+          FLAGS=()
+          if [[ "${{ inputs.draft }}" == "true" ]]; then FLAGS+=("--draft"); fi
+          if [[ "${{ inputs.prerelease }}" == "true" ]]; then FLAGS+=("--prerelease"); fi
+
+          gh release create "${TAG}" \
+            --title "${NAME}" \
+            --target "${TARGET}" \
+            --notes "Automated PR preview release for ${TAG} (${TARGET})." \
+            "${FLAGS[@]}"
+
+      - name: Upload release assets (pr)
+        if: ${{ inputs.mode == 'pr' }}
+        env:
+          GH_TOKEN: ${{ secrets.token || github.token }}
+        run: |
+          set -euo pipefail
+          TAG="${{ inputs.tag }}"
+
+          echo "Uploading assets to ${TAG}"
+          ls -R release-assets || true
+
+          EXTRA=()
+          if [[ -f "release-assets/appinspect.txt" ]]; then
+            EXTRA+=("release-assets/appinspect.txt")
+          fi
+
+          gh release upload "${TAG}" release-assets/output/* "${EXTRA[@]}" --clobber
+          gh release view "${TAG}" --json url -q .url
 
       # ----------------------------
       # MAIN MODE: semantic-release
@@ -117,93 +172,8 @@ jobs:
         run: |
           set -euo pipefail
           TAG="v${{ inputs.version }}"
-          echo "Uploading assets to ${TAG}"
-
-          EXTRA=""
+          EXTRA=()
           if [[ -f "release-assets/appinspect.txt" ]]; then
-            EXTRA="release-assets/appinspect.txt"
+            EXTRA+=("release-assets/appinspect.txt")
           fi
-
-          gh release upload "${TAG}" release-assets/output/* $EXTRA --clobber
-
-          URL="$(gh release view "${TAG}" --json url -q .url)"
-          echo "Release URL: $URL"
-          echo "release_url=$URL" >> "$GITHUB_OUTPUT"
-          echo "release_tag=$TAG" >> "$GITHUB_OUTPUT"
-
-      # ----------------------------
-      # PR MODE: clean replace draft
-      # ----------------------------
-      - name: Replace PR draft release (delete old, create new)
-        if: ${{ inputs.mode == 'pr' }}
-        env:
-          GH_TOKEN: ${{ secrets.token || github.token }}
-        run: |
-          set -euo pipefail
-
-          TAG="${{ inputs.tag }}"
-          if [[ -z "${TAG:-}" ]]; then
-            echo "mode=pr requires inputs.tag (recommended: pr-<number>)" >&2
-            exit 1
-          fi
-
-          NAME="${{ inputs.release_name }}"
-          if [[ -z "${NAME:-}" ]]; then
-            NAME="PR Preview – ${{ inputs.version }}"
-          fi
-
-          TARGET="${{ inputs.target_commitish }}"
-          if [[ -z "${TARGET:-}" ]]; then
-            TARGET="${GITHUB_SHA}"
-          fi
-
-          echo "Ensuring a clean PR draft release for tag: ${TAG}"
-
-          # If a release exists for this tag, delete it (this also removes its assets)
-          if gh release view "${TAG}" >/dev/null 2>&1; then
-            echo "Deleting existing release ${TAG}"
-            gh release delete "${TAG}" -y
-          fi
-
-          # Also delete the git tag if it exists (so we recreate from scratch cleanly)
-          if git ls-remote --tags origin "refs/tags/${TAG}" | grep -q "${TAG}"; then
-            echo "Deleting remote tag ${TAG}"
-            gh api -X DELETE "repos/${GITHUB_REPOSITORY}/git/refs/tags/${TAG}" >/dev/null
-          fi
-
-          echo "Creating new draft prerelease ${TAG} at ${TARGET}"
-          gh release create "${TAG}" \
-            --title "${NAME}" \
-            --target "${TARGET}" \
-            --draft=${{ inputs.draft }} \
-            --prerelease=${{ inputs.prerelease }} \
-            --notes "Automated PR preview release for ${TAG} (${TARGET})."
-
-      - name: Upload release assets (pr)
-        if: ${{ inputs.mode == 'pr' }}
-        env:
-          GH_TOKEN: ${{ secrets.token || github.token }}
-        run: |
-          set -euo pipefail
-
-          TAG="${{ inputs.tag }}"
-          echo "Uploading assets to ${TAG}"
-
-          EXTRA=""
-          if [[ -f "release-assets/appinspect.txt" ]]; then
-            EXTRA="release-assets/appinspect.txt"
-          fi
-
-          gh release upload "${TAG}" release-assets/output/* $EXTRA --clobber
-
-          URL="$(gh release view "${TAG}" --json url -q .url)"
-          echo "Release URL: $URL"
-          echo "release_url=$URL" >> "$GITHUB_OUTPUT"
-          echo "release_tag=$TAG" >> "$GITHUB_OUTPUT"
-
-      - name: Expose outputs
-        id: out
-        run: |
-          # This step exists only so job outputs are always set via $GITHUB_OUTPUT in the upload steps.
-          # Nothing to do here.
-          true
+          gh release upload "${TAG}" release-assets/output/* "${EXTRA[@]}" --clobber
