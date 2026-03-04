@@ -38,10 +38,14 @@ jobs:
         run: |
           uv run pre-commit run --all-files
 
+      - name: Generate requirements from uv for UCC
+        run: |
+          uv export --format requirements.txt --no-dev > ${{ inputs.artifact_addon_name }}/package/lib/requirements.txt
+
       - name: Build Add-on
         run: |
           mkdir -p dist
-          uv run ucc-gen build --source "${{ inputs.artifact_addon_name}}/package" --ta-version "${{inputs.version }}" -o dist
+          uv run ucc-gen build --source "${{ inputs.artifact_addon_name }}/package" --ta-version "${{inputs.version }}" -o dist
 
       - name: Validate the Add-on
         run: |
