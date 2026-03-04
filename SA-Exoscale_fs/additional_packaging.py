@@ -14,9 +14,7 @@ def cleanup_output_files(output_path: str, ta_name: str) -> None:
                     or present in app.manifest file of add-on.
     """
     files_to_delete = []
-    files_to_delete.append(
-        sep.join([output_path, ta_name, "bin", "audit_helper_test.py"])
-    )
+    files_to_delete.append(sep.join([output_path, ta_name, "lib", ".gitkeep"]))
 
     for delete_file in files_to_delete:
         try:
