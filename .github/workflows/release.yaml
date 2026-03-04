@@ -4,6 +4,16 @@ on:
       version:
         type: string
         required: true
+      go_version:
+        type: string
+        default: "1.22"
+      provider:
+        type: string
+        default: "github"
+    secrets:
+      token:
+        required: false
+
 
 
 permissions:

@@ -12,7 +12,7 @@ on:
     outputs:
       version:
         description: "Released version (empty if none)"
-        value: ${{ jobs.release.outputs.version }}
+        value: ${{ jobs.versioning.outputs.version }}
     secrets:
       token:
         required: false
@@ -21,7 +21,7 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  versioning:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.semrel.outputs.version }}
