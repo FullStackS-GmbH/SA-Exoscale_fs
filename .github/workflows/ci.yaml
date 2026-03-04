@@ -20,5 +20,3 @@ jobs:
   release:
     needs: [semver, build]
     uses: ./.github/workflows/release.yaml
-    with:
-      version: ${{ needs.semver.outputs.version }}
