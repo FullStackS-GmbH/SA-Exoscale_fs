@@ -53,8 +53,7 @@ jobs:
           # Prefer a passed-in token (PAT/App token). Fallback to GITHUB_TOKEN.
           GITHUB_TOKEN: ${{ secrets.token || github.token }}
         run: |
-          set -euo pipefail
-          export VERSION=$(semantic-release --dry | grep 'new version' | sed -E 's/.* ([[:digit:].]+)$/\1/')
+          export VERSION=$(semantic-release --dry | grep -oP 'new version: \K[0-9]+\.[0-9]+\.[0-9]+')
           echo "${VERSION}"
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           semantic-release version --provider "${{ inputs.provider }}"
