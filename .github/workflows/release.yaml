@@ -4,12 +4,6 @@ on:
       version:
         type: string
         required: true
-      artifact_addon_name:
-        type: string
-        default: "ucc-addon"
-      artifact_report_name:
-        type: string
-        default: "splunk-validation-report"
 
 
 permissions:
@@ -18,8 +12,6 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.semrel.outputs.version }}
 
     steps:
       - name: Checkout

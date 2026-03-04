@@ -5,10 +5,6 @@ on:
     branches:
       - main
 
-env:
-  addon_name: SA-Exoscale_fs
-  report_name: splunk-appinspect.txt
-
 jobs:
   semver:
     uses: ./.github/workflows/sem_ver.yaml
@@ -18,13 +14,11 @@ jobs:
     uses: ./.github/workflows/build.yaml
     with:
       version: ${{ needs.semver.outputs.version }}
-      artifact_addon_name: ${{ env.addon_name }}
-      artifact_report_name: ${{ env.report_name }}
+      artifact_addon_name: ${{ vars.ADDON_NAME }}
+      artifact_report_name: ${{ vars.REPORT_NAME }}
 
   release:
     needs: [semver, build]
     uses: ./.github/workflows/release.yaml
     with:
       version: ${{ needs.semver.outputs.version }}
-      artifact_addon_name: ${{ env.addon_name }}
-      artifact_report_name: ${{ env.report_name }}
