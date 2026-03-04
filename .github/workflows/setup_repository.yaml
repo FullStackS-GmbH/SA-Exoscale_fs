@@ -52,6 +52,7 @@ jobs:
 
       - name: Package the Add-on
         run: |
+          mkdir output
           uv run ucc-gen package --path dist/${{ inputs.artifact_addon_name }} -o output
 
       - name: Upload built add-on
