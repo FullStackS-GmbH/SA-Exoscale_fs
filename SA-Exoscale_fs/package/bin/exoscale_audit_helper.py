@@ -31,11 +31,9 @@ def get_data_from_api(
     logger: logging.Logger,
     api_key: str,
     api_secret: str,
-    zones: str,
     from_date: datetime.datetime,
     to_date: datetime.datetime,
 ):
-    zones = zones.split("|")
     from_time_formatted = from_date.strftime("%Y-%m-%dT%H:%M:%SZ")
     to_time_formatted = to_date.strftime("%Y-%m-%dT%H:%M:%SZ")
     logger.info(f"Fetching events from {from_time_formatted} to {to_time_formatted}")
@@ -64,9 +62,6 @@ def stream_events(inputs: smi.InputDefinition, event_writer: smi.EventWriter):
             api_key = get_account_argument(
                 session_key, input_item.get("account"), "api_key"
             )
-            api_zones = get_account_argument(
-                session_key, input_item.get("account"), "ms_api_zones"
-            )
             api_secret = get_account_argument(
                 session_key, input_item.get("account"), "api_secret"
             )
@@ -91,7 +86,7 @@ def stream_events(inputs: smi.InputDefinition, event_writer: smi.EventWriter):
             sourcetype = "exoscale:event"
             counter = 0
             for event in get_data_from_api(
-                logger, api_key, api_secret, api_zones, from_time, to_time
+                logger, api_key, api_secret, from_time, to_time
             ):
                 event_writer.write_event(
                     smi.Event(
