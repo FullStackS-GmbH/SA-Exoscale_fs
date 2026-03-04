@@ -7,7 +7,7 @@ on:
 
 jobs:
   semver:
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/semver.yaml
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/semver.yaml@v1.1.0
 
   build:
     needs: semver
