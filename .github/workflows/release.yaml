@@ -8,31 +8,28 @@ on:
         required: true
 
       # main => run semantic-release
-      # pr   => draft prerelease (no semantic-release)
+      # pr   => draft prerelease with stable tag
       mode:
         type: string
         default: "main"
 
-      # PR mode: stable tag so updates overwrite the same draft release
-      # e.g. "pr-123"
+      # PR mode: stable tag, e.g. "pr-123"
       tag:
         type: string
         required: false
 
-      # Optional display name for the GitHub release
       release_name:
         type: string
         required: false
 
-      # Optional: set release target commit
       target_commitish:
         type: string
         required: false
 
-      # PR mode defaults
       draft:
         type: boolean
         default: false
+
       prerelease:
         type: boolean
         default: false
@@ -40,14 +37,22 @@ on:
       go_version:
         type: string
         default: "1.22"
+
       provider:
         type: string
         default: "github"
 
-      # Artifact name produced by build workflow
       artifact_name:
         type: string
         default: "release-assets"
+
+    outputs:
+      release_url:
+        description: "HTML URL of the created/updated release"
+        value: ${{ jobs.release.outputs.release_url }}
+      release_tag:
+        description: "Tag used for the release"
+        value: ${{ jobs.release.outputs.release_tag }}
 
     secrets:
       token:
@@ -59,6 +64,9 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      release_url: ${{ steps.out.outputs.release_url }}
+      release_tag: ${{ steps.out.outputs.release_tag }}
 
     steps:
       - name: Checkout
@@ -73,7 +81,7 @@ jobs:
           path: release-assets
 
       # ----------------------------
-      # MAIN MODE: real release flow
+      # MAIN MODE: semantic-release
       # ----------------------------
       - name: Set up Go
         if: ${{ inputs.mode == 'main' }}
@@ -102,10 +110,31 @@ jobs:
           set -euo pipefail
           semantic-release --provider "${{ inputs.provider }}"
 
+      - name: Upload release assets (main)
+        if: ${{ inputs.mode == 'main' }}
+        env:
+          GH_TOKEN: ${{ secrets.token || github.token }}
+        run: |
+          set -euo pipefail
+          TAG="v${{ inputs.version }}"
+          echo "Uploading assets to ${TAG}"
+
+          EXTRA=""
+          if [[ -f "release-assets/appinspect.txt" ]]; then
+            EXTRA="release-assets/appinspect.txt"
+          fi
+
+          gh release upload "${TAG}" release-assets/output/* $EXTRA --clobber
+
+          URL="$(gh release view "${TAG}" --json url -q .url)"
+          echo "Release URL: $URL"
+          echo "release_url=$URL" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$TAG" >> "$GITHUB_OUTPUT"
+
       # ----------------------------
-      # PR MODE: draft prerelease flow
+      # PR MODE: clean replace draft
       # ----------------------------
-      - name: Create/Update draft prerelease (PR mode)
+      - name: Replace PR draft release (delete old, create new)
         if: ${{ inputs.mode == 'pr' }}
         env:
           GH_TOKEN: ${{ secrets.token || github.token }}
@@ -128,49 +157,53 @@ jobs:
             TARGET="${GITHUB_SHA}"
           fi
 
+          echo "Ensuring a clean PR draft release for tag: ${TAG}"
+
+          # If a release exists for this tag, delete it (this also removes its assets)
           if gh release view "${TAG}" >/dev/null 2>&1; then
-            gh release edit "${TAG}" \
-              --title "${NAME}" \
-              --target "${TARGET}" \
-              --draft=${{ inputs.draft }} \
-              --prerelease=${{ inputs.prerelease }}
-          else
-            gh release create "${TAG}" \
-              --title "${NAME}" \
-              --target "${TARGET}" \
-              --draft=${{ inputs.draft }} \
-              --prerelease=${{ inputs.prerelease }} \
-              --notes "Automated PR preview release for ${TAG} (${TARGET})."
+            echo "Deleting existing release ${TAG}"
+            gh release delete "${TAG}" -y
           fi
 
-      # ----------------------------
-      # Upload assets (both modes)
-      # ----------------------------
-      - name: Upload release assets
-        if: ${{ success() }}
+          # Also delete the git tag if it exists (so we recreate from scratch cleanly)
+          if git ls-remote --tags origin "refs/tags/${TAG}" | grep -q "${TAG}"; then
+            echo "Deleting remote tag ${TAG}"
+            gh api -X DELETE "repos/${GITHUB_REPOSITORY}/git/refs/tags/${TAG}" >/dev/null
+          fi
+
+          echo "Creating new draft prerelease ${TAG} at ${TARGET}"
+          gh release create "${TAG}" \
+            --title "${NAME}" \
+            --target "${TARGET}" \
+            --draft=${{ inputs.draft }} \
+            --prerelease=${{ inputs.prerelease }} \
+            --notes "Automated PR preview release for ${TAG} (${TARGET})."
+
+      - name: Upload release assets (pr)
+        if: ${{ inputs.mode == 'pr' }}
         env:
           GH_TOKEN: ${{ secrets.token || github.token }}
         run: |
           set -euo pipefail
 
-          ls -R release-assets || true
-
-          if [[ "${{ inputs.mode }}" == "pr" ]]; then
-            TAG="${{ inputs.tag }}"
-          else
-            TAG="v${{ inputs.version }}"
-          fi
-
+          TAG="${{ inputs.tag }}"
           echo "Uploading assets to ${TAG}"
 
-          # Keep your existing structure
-          # If appinspect.txt might not exist for some builds, guard it:
           EXTRA=""
           if [[ -f "release-assets/appinspect.txt" ]]; then
             EXTRA="release-assets/appinspect.txt"
           fi
 
-          gh release upload "${TAG}" \
-            release-assets/output/* \
-            $EXTRA \
-            --clobber
+          gh release upload "${TAG}" release-assets/output/* $EXTRA --clobber
+
+          URL="$(gh release view "${TAG}" --json url -q .url)"
+          echo "Release URL: $URL"
+          echo "release_url=$URL" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Expose outputs
+        id: out
+        run: |
+          # This step exists only so job outputs are always set via $GITHUB_OUTPUT in the upload steps.
+          # Nothing to do here.
+          true
