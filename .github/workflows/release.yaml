@@ -6,31 +6,48 @@ on:
       version:
         type: string
         required: true
-      go_version:
-        type: string
-        default: "1.22"
 
-      provider:
-        type: string
-        default: "github"
+      # main => run semantic-release
+      # pr   => draft prerelease (no semantic-release)
       mode:
         type: string
         default: "main"
+
+      # PR mode: stable tag so updates overwrite the same draft release
+      # e.g. "pr-123"
       tag:
         type: string
         required: false
+
+      # Optional display name for the GitHub release
       release_name:
         type: string
         required: false
+
+      # Optional: set release target commit
       target_commitish:
         type: string
         required: false
+
+      # PR mode defaults
       draft:
         type: boolean
         default: false
       prerelease:
         type: boolean
         default: false
+
+      go_version:
+        type: string
+        default: "1.22"
+      provider:
+        type: string
+        default: "github"
+
+      # Artifact name produced by build workflow
+      artifact_name:
+        type: string
+        default: "release-assets"
 
     secrets:
       token:
@@ -49,10 +66,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download build outputs (release-assets)
+      - name: Download build outputs
         uses: actions/download-artifact@v4
         with:
-          name: release-assets
+          name: ${{ inputs.artifact_name }}
           path: release-assets
 
       # ----------------------------
@@ -97,14 +114,13 @@ jobs:
 
           TAG="${{ inputs.tag }}"
           if [[ -z "${TAG:-}" ]]; then
-            # Strongly recommended: caller sets a stable tag like "pr-123"
-            echo "inputs.tag is required for mode=pr (e.g. tag: pr-<number>)" >&2
+            echo "mode=pr requires inputs.tag (recommended: pr-<number>)" >&2
             exit 1
           fi
 
           NAME="${{ inputs.release_name }}"
           if [[ -z "${NAME:-}" ]]; then
-            NAME="PR Preview - ${{ inputs.version }}"
+            NAME="PR Preview – ${{ inputs.version }}"
           fi
 
           TARGET="${{ inputs.target_commitish }}"
@@ -112,38 +128,25 @@ jobs:
             TARGET="${GITHUB_SHA}"
           fi
 
-          DRAFT_FLAG="--draft"
-          if [[ "${{ inputs.draft }}" != "true" ]]; then
-            DRAFT_FLAG="--draft=false"
-          fi
-
-          PRERELEASE_FLAG="--prerelease"
-          if [[ "${{ inputs.prerelease }}" != "true" ]]; then
-            PRERELEASE_FLAG="--prerelease=false"
-          fi
-
-          echo "Ensuring release exists for tag: ${TAG}"
           if gh release view "${TAG}" >/dev/null 2>&1; then
-            echo "Release exists; updating metadata"
             gh release edit "${TAG}" \
               --title "${NAME}" \
               --target "${TARGET}" \
-              ${DRAFT_FLAG} \
-              ${PRERELEASE_FLAG}
+              --draft=${{ inputs.draft }} \
+              --prerelease=${{ inputs.prerelease }}
           else
-            echo "Release does not exist; creating"
             gh release create "${TAG}" \
               --title "${NAME}" \
               --target "${TARGET}" \
-              ${DRAFT_FLAG} \
-              ${PRERELEASE_FLAG} \
+              --draft=${{ inputs.draft }} \
+              --prerelease=${{ inputs.prerelease }} \
               --notes "Automated PR preview release for ${TAG} (${TARGET})."
           fi
 
       # ----------------------------
       # Upload assets (both modes)
       # ----------------------------
-      - name: Upload release assets (add-on + report)
+      - name: Upload release assets
         if: ${{ success() }}
         env:
           GH_TOKEN: ${{ secrets.token || github.token }}
@@ -152,9 +155,6 @@ jobs:
 
           ls -R release-assets || true
 
-          # Choose the tag to upload to:
-          # - main mode: semantic-release typically tags v<version>
-          # - pr mode: use the provided stable tag (e.g. pr-123)
           if [[ "${{ inputs.mode }}" == "pr" ]]; then
             TAG="${{ inputs.tag }}"
           else
@@ -163,10 +163,14 @@ jobs:
 
           echo "Uploading assets to ${TAG}"
 
-          # Adjust paths as needed; keep your current ones:
-          # - release-assets/output/*  (primary artifacts)
-          # - release-assets/appinspect.txt (extra report)
+          # Keep your existing structure
+          # If appinspect.txt might not exist for some builds, guard it:
+          EXTRA=""
+          if [[ -f "release-assets/appinspect.txt" ]]; then
+            EXTRA="release-assets/appinspect.txt"
+          fi
+
           gh release upload "${TAG}" \
             release-assets/output/* \
-            release-assets/appinspect.txt \
+            $EXTRA \
             --clobber
