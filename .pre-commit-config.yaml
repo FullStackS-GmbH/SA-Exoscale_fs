@@ -34,5 +34,5 @@ repos:
           - -cgeneral.staged=true
           - -ctitle-max-length.line-length=80
           - '-ctitle-match-regex.regex=^(feat|fix|try|maintain)!?(\(.*\))?:.+|^Merge branch.*'
-          - "-cauthor-valid-email.regex=[^@]+@fullstacks.eu"
+          - "-cauthor-valid-email.regex=[^@]+@fullstacks.(eu|io)"
           - --msg-filename
