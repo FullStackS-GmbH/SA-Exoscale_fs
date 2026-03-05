@@ -3,8 +3,10 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/output/SA-Exoscale_fs/appserver/static/js/build" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.14 virtualenv at ~/Documents/Work/Customers/ExoScale/SA-Exoscale_fs/.venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="splunk-workflows" />
   </component>
 </module>
