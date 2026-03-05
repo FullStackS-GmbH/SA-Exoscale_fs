@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/SA-Exoscale_fs.iml" filepath="$PROJECT_DIR$/.idea/SA-Exoscale_fs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../splunk-workflows/.idea/splunk-workflows.iml" filepath="$PROJECT_DIR$/../splunk-workflows/.idea/splunk-workflows.iml" />
     </modules>
   </component>
 </project>
