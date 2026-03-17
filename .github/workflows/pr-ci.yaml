@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   semver:
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/semver.yaml@v1.1.5
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/semver.yaml@v1.1.6
     with:
       mode: pr
       pr_number: ${{ github.event.pull_request.number }}
@@ -23,7 +23,7 @@ jobs:
 
   build:
     needs: semver
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/build.yaml@v1.1.5
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/build.yaml@v1.1.6
     with:
       version: ${{ needs.semver.outputs.version }}
       artifact_addon_name: ${{ vars.ADDON_NAME }}
@@ -31,7 +31,7 @@ jobs:
 
   release:
     needs: [semver, build]
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/release.yaml@v1.1.5
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/release.yaml@v1.1.6
     with:
       version: ${{ needs.semver.outputs.version }}
       draft: true
@@ -43,7 +43,7 @@ jobs:
 
   pr_release_comment:
     needs: [ semver, build, release ]
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/pr_release_comment.yaml@v1.1.5
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/pr_release_comment.yaml@v1.1.6
     with:
       tag: pr-${{ github.event.pull_request.number }}
       version: ${{ needs.semver.outputs.version }}
