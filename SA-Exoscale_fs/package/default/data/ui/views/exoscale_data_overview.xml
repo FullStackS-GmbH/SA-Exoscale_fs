@@ -1,0 +1,616 @@
+<dashboard version="2" theme="dark">
+    <label>Exoscale Data Overview</label>
+    <description></description>
+    <definition><![CDATA[
+{
+    "title": "Exoscale Data Overview",
+    "description": "",
+    "inputs": {
+        "input_175tCkc0": {
+            "context": {
+                "formattedConfig": {
+                    "number": {
+                        "prefix": ""
+                    }
+                },
+                "formattedStatics": ">statics | formatByType(formattedConfig)",
+                "label": ">primary | seriesByName(\"handler\") | renameSeries(\"label\") | formatByType(formattedConfig)",
+                "statics": [
+                    [
+                        "All"
+                    ],
+                    [
+                        "*"
+                    ]
+                ],
+                "value": ">primary | seriesByName(\"handler\") | renameSeries(\"value\") | formatByType(formattedConfig)"
+            },
+            "dataSources": {
+                "primary": "ds_P7cfVenx"
+            },
+            "options": {
+                "defaultValue": [
+                    "*"
+                ],
+                "items": ">frame(label, value) | prepend(formattedStatics) | objects()",
+                "token": "action_tok"
+            },
+            "title": "Actions",
+            "type": "input.multiselect"
+        },
+        "input_global_trp": {
+            "options": {
+                "defaultValue": "-24h@h,now",
+                "token": "global_time"
+            },
+            "title": "Global Time Range",
+            "type": "input.timerange"
+        },
+        "input_mKjhdeos": {
+            "context": {
+                "formattedConfig": {
+                    "number": {
+                        "prefix": ""
+                    }
+                },
+                "formattedStatics": ">statics | formatByType(formattedConfig)",
+                "label": ">primary | seriesByName(\"user\") | renameSeries(\"label\") | formatByType(formattedConfig)",
+                "statics": [
+                    [
+                        "All"
+                    ],
+                    [
+                        "*"
+                    ]
+                ],
+                "value": ">primary | seriesByName(\"user\") | renameSeries(\"value\") | formatByType(formattedConfig)"
+            },
+            "dataSources": {
+                "primary": "ds_fraZP9Qb"
+            },
+            "options": {
+                "defaultValue": [
+                    "*"
+                ],
+                "items": ">frame(label, value) | prepend(formattedStatics) | objects()",
+                "token": "user_tok"
+            },
+            "title": "User",
+            "type": "input.multiselect"
+        }
+    },
+    "defaults": {
+        "dataSources": {
+            "ds.o11y": {
+                "options": {
+                    "queryParameters": {
+                        "earliest": "$global_time.earliest$",
+                        "latest": "$global_time.latest$"
+                    }
+                }
+            },
+            "ds.search": {
+                "options": {
+                    "queryParameters": {
+                        "earliest": "$global_time.earliest$",
+                        "latest": "$global_time.latest$"
+                    }
+                }
+            }
+        },
+        "tokens": {
+            "default": {
+                "Users": {
+                    "value": "empty"
+                }
+            }
+        },
+        "visualizations": {
+            "global": {
+                "showProgressBar": true
+            }
+        }
+    },
+    "visualizations": {
+        "viz_5G1qawzf": {
+            "containerOptions": {
+                "title": {
+                    "color": "#131313"
+                }
+            },
+            "dataSources": {
+                "primary": "ds_qpMHhdG5"
+            },
+            "options": {
+                "backgroundColor": "#5cb8b2",
+                "tableFormat": {
+                    "align": "center",
+                    "headerAlign": "center",
+                    "headerBackgroundColor": "> backgroundColor | setColorChannel(tableHeaderBackgroundColorConfig)",
+                    "headerColor": "> headerBackgroundColor | maxContrast(tableRowColorMaxContrast)",
+                    "rowBackgroundColors": "> table | seriesByIndex(0) | pick(tableAltRowBackgroundColorsByBackgroundColor)",
+                    "rowColors": "> rowBackgroundColors | maxContrast(tableRowColorMaxContrast)"
+                }
+            },
+            "title": "User Action Details (Authentication)",
+            "type": "splunk.table"
+        },
+        "viz_FBgeFRu5": {
+            "containerOptions": {
+                "title": {
+                    "color": "#131313"
+                }
+            },
+            "dataSources": {
+                "primary": "ds_WKjqrx8F_ds_qpMHhdG5"
+            },
+            "options": {
+                "backgroundColor": "#5cb8b2",
+                "tableFormat": {
+                    "align": "center",
+                    "headerAlign": "center",
+                    "headerBackgroundColor": "> backgroundColor | setColorChannel(tableHeaderBackgroundColorConfig)",
+                    "headerColor": "> headerBackgroundColor | maxContrast(tableRowColorMaxContrast)",
+                    "rowBackgroundColors": "> table | seriesByIndex(0) | pick(tableAltRowBackgroundColorsByBackgroundColor)",
+                    "rowColors": "> rowBackgroundColors | maxContrast(tableRowColorMaxContrast)"
+                }
+            },
+            "title": "User Action Details (Change)",
+            "type": "splunk.table"
+        },
+        "viz_OlDSAwyA": {
+            "containerOptions": {
+                "description": {
+                    "color": "#131313"
+                },
+                "title": {
+                    "color": "#131313"
+                }
+            },
+            "dataSources": {
+                "primary": "ds_6U6ySlQS_ds_sRZag8F1_ds_i4wRou6J_ds_vy1Z66iY"
+            },
+            "options": {
+                "backgroundColor": "#5cb8b2",
+                "majorColor": "#131313",
+                "trendColor": "#131313"
+            },
+            "title": "Most performed action (Change)",
+            "type": "splunk.singlevalue"
+        },
+        "viz_PHaWoJJI": {
+            "options": {
+                "preserveAspectRatio": true,
+                "src": "splunk-enterprise-kvstore://69bd3149739729514e081975"
+            },
+            "type": "splunk.image"
+        },
+        "viz_X1SHduyd": {
+            "containerOptions": {
+                "title": {
+                    "color": "#131313"
+                }
+            },
+            "dataSources": {
+                "primary": "ds_i4wRou6J_ds_vy1Z66iY"
+            },
+            "options": {
+                "backgroundColor": "#5cb8b2",
+                "majorColor": "#131313"
+            },
+            "title": "Successful Actions",
+            "type": "splunk.singlevalue"
+        },
+        "viz_bHfZwdhj": {
+            "containerOptions": {
+                "title": {
+                    "color": "#131313"
+                }
+            },
+            "dataSources": {
+                "primary": "ds_vy1Z66iY"
+            },
+            "options": {
+                "backgroundColor": "#5cb8b2",
+                "majorColor": "#131313"
+            },
+            "title": "Failed Actions",
+            "type": "splunk.singlevalue"
+        },
+        "viz_nfpkqCgI": {
+            "containerOptions": {
+                "title": {
+                    "color": "#131313"
+                }
+            },
+            "dataSources": {
+                "primary": "ds_sRZag8F1_ds_i4wRou6J_ds_vy1Z66iY"
+            },
+            "options": {
+                "backgroundColor": "#5cb8b2",
+                "majorColor": "#131313"
+            },
+            "title": "User with most activity",
+            "type": "splunk.singlevalue"
+        },
+        "viz_ri36s2xp": {
+            "containerOptions": {
+                "description": {
+                    "color": "#131313"
+                },
+                "title": {
+                    "color": "#131313"
+                },
+                "visibility": {
+                    "hideWhenNoData": true
+                }
+            },
+            "dataSources": {
+                "primary": "ds_lEKCFHkq"
+            },
+            "options": {
+                "backgroundColor": "#5cb8b2"
+            },
+            "title": "Total Actions Performed by User",
+            "type": "splunk.pie"
+        },
+        "viz_szcxPEiY": {
+            "containerOptions": {
+                "description": {
+                    "color": "#131313"
+                },
+                "title": {
+                    "color": "#131313"
+                },
+                "visibility": {
+                    "hideWhenNoData": true
+                }
+            },
+            "dataSources": {
+                "primary": "ds_OkI2RULe_ds_lEKCFHkq"
+            },
+            "options": {
+                "backgroundColor": "#5cb8b2"
+            },
+            "title": "Actions Performed by User",
+            "type": "splunk.pie"
+        },
+        "viz_ws8sjURt": {
+            "containerOptions": {
+                "description": {
+                    "color": "#131313"
+                },
+                "title": {
+                    "color": "#131313"
+                },
+                "visibility": {
+                    "hideWhenNoData": true
+                }
+            },
+            "dataSources": {
+                "primary": "ds_tIPxzfyf_ds_xNS76cvL"
+            },
+            "options": {
+                "backgroundColor": "#5cb8b2"
+            },
+            "showLastUpdated": false,
+            "showProgressBar": true,
+            "title": "Actions Performed by User",
+            "type": "splunk.column"
+        },
+        "viz_y4Douo77": {
+            "containerOptions": {
+                "description": {
+                    "color": "#131313"
+                },
+                "title": {
+                    "color": "#131313"
+                },
+                "visibility": {
+                    "hideWhenNoData": true
+                }
+            },
+            "dataSources": {
+                "primary": "ds_xNS76cvL"
+            },
+            "options": {
+                "backgroundColor": "#5cb8b2"
+            },
+            "showLastUpdated": false,
+            "showProgressBar": true,
+            "title": "Total Actions Performed by User",
+            "type": "splunk.column"
+        }
+    },
+    "dataSources": {
+        "ds_0v8FPPgk_ds_sRZag8F1_ds_i4wRou6J_ds_vy1Z66iY": {
+            "name": "successful_actions copy 2",
+            "options": {
+                "query": "index=exoscale status=2* OR status=3*\n| stats c"
+            },
+            "type": "ds.search"
+        },
+        "ds_6D2yI9h7_ds_fraZP9Qb": {
+            "name": "all_users copy 1",
+            "options": {
+                "query": "index=exoscale\n| stats c as _c by user"
+            },
+            "type": "ds.search"
+        },
+        "ds_6U6ySlQS_ds_sRZag8F1_ds_i4wRou6J_ds_vy1Z66iY": {
+            "name": "most_performed_action",
+            "options": {
+                "query": "index=exoscale sourcetype=exoscale:audittrail:mutation user IN ($user_tok$)\n| stats c by action command\n| eval action_activity = action . \" - \" . command\n| sort - c\n| head 1\n| table action_activity"
+            },
+            "type": "ds.search"
+        },
+        "ds_OkI2RULe_ds_lEKCFHkq": {
+            "name": "users_pie_single",
+            "options": {
+                "query": "index=exoscale user IN ($user_tok$)\n| stats count by handler\n| head limit=10000 ($user_tok|s$ != \"*\")",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                }
+            },
+            "type": "ds.search"
+        },
+        "ds_P7cfVenx": {
+            "name": "all_actions",
+            "options": {
+                "query": "index=exoscale \n| stats c by handler"
+            },
+            "type": "ds.search"
+        },
+        "ds_WKjqrx8F_ds_qpMHhdG5": {
+            "name": "user_details_mutation",
+            "options": {
+                "query": "index=exoscale sourcetype=exoscale:audittrail:mutation user IN ($user_tok$)\n| stats latest(_time) as latest_time c by user action command status\n| convert ctime(latest_time) as latest_time",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                }
+            },
+            "type": "ds.search"
+        },
+        "ds_fraZP9Qb": {
+            "name": "all_users",
+            "options": {
+                "query": "index=exoscale\n| stats c as _c by user"
+            },
+            "type": "ds.search"
+        },
+        "ds_i4wRou6J_ds_vy1Z66iY": {
+            "name": "successful_actions",
+            "options": {
+                "query": "index=exoscale status=2* OR status=3* user IN ($user_tok$)\n| stats c"
+            },
+            "type": "ds.search"
+        },
+        "ds_lEKCFHkq": {
+            "name": "users_pie",
+            "options": {
+                "query": "index=exoscale user IN ($user_tok$)\n| stats count by user\n| head limit=10000 ($user_tok|s$ = \"*\")",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                }
+            },
+            "type": "ds.search"
+        },
+        "ds_qpMHhdG5": {
+            "name": "user_details",
+            "options": {
+                "query": "index=exoscale sourcetype=exoscale:audittrail:auth user IN ($user_tok$)\n| stats latest(_time) as latest_time c by user action command status\n| convert ctime(latest_time) as latest_time",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                }
+            },
+            "type": "ds.search"
+        },
+        "ds_sRZag8F1_ds_i4wRou6J_ds_vy1Z66iY": {
+            "name": "most_activity_user",
+            "options": {
+                "query": "index=exoscale user IN ($user_tok$)\n| stats c by user\n| sort - count\n| head 1\n| table user"
+            },
+            "type": "ds.search"
+        },
+        "ds_tIPxzfyf_ds_xNS76cvL": {
+            "name": "users_search_single",
+            "options": {
+                "query": "index=exoscale user IN ($user_tok$)\n| timechart useother=f count by handler\n| head limit=10000 ($user_tok|s$ != \"*\")",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                }
+            },
+            "type": "ds.search"
+        },
+        "ds_vy1Z66iY": {
+            "name": "failed_actions",
+            "options": {
+                "query": "index=exoscale status=4* OR status=5* user IN ($user_tok$)\n| stats c"
+            },
+            "type": "ds.search"
+        },
+        "ds_xNS76cvL": {
+            "name": "users_search",
+            "options": {
+                "query": "index=exoscale user IN ($user_tok$)\n| timechart count by user\n| head limit=10000 ($user_tok|s$ = \"*\")",
+                "queryParameters": {
+                    "earliest": "$global_time.earliest$",
+                    "latest": "$global_time.latest$"
+                }
+            },
+            "type": "ds.search"
+        }
+    },
+    "layout": {
+        "globalInputs": [],
+        "layoutDefinitions": {
+            "layout_1": {
+                "options": {
+                    "backgroundColor": "#131313",
+                    "display": "auto",
+                    "height": 1080,
+                    "width": 1920
+                },
+                "structure": [
+                    {
+                        "item": "viz_y4Douo77",
+                        "position": {
+                            "h": 450,
+                            "w": 940,
+                            "x": 20,
+                            "y": 280
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "input_global_trp",
+                        "position": {
+                            "h": 82,
+                            "w": 198,
+                            "x": 20,
+                            "y": 10
+                        },
+                        "type": "input"
+                    },
+                    {
+                        "item": "viz_ri36s2xp",
+                        "position": {
+                            "h": 450,
+                            "w": 930,
+                            "x": 980,
+                            "y": 280
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "viz_5G1qawzf",
+                        "position": {
+                            "h": 470,
+                            "w": 940,
+                            "x": 20,
+                            "y": 750
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "viz_FBgeFRu5",
+                        "position": {
+                            "h": 470,
+                            "w": 930,
+                            "x": 980,
+                            "y": 750
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "viz_bHfZwdhj",
+                        "position": {
+                            "h": 140,
+                            "w": 330,
+                            "x": 20,
+                            "y": 110
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "viz_X1SHduyd",
+                        "position": {
+                            "h": 140,
+                            "w": 330,
+                            "x": 370,
+                            "y": 110
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "viz_nfpkqCgI",
+                        "position": {
+                            "h": 140,
+                            "w": 590,
+                            "x": 720,
+                            "y": 110
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "viz_OlDSAwyA",
+                        "position": {
+                            "h": 140,
+                            "w": 580,
+                            "x": 1330,
+                            "y": 110
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "input_mKjhdeos",
+                        "position": {
+                            "h": 82,
+                            "w": 198,
+                            "x": 230,
+                            "y": 10
+                        },
+                        "type": "input"
+                    },
+                    {
+                        "item": "input_175tCkc0",
+                        "position": {
+                            "h": 82,
+                            "w": 198,
+                            "x": 440,
+                            "y": 10
+                        },
+                        "type": "input"
+                    },
+                    {
+                        "item": "viz_PHaWoJJI",
+                        "position": {
+                            "h": 300,
+                            "w": 300,
+                            "x": 1640,
+                            "y": -100
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "viz_szcxPEiY",
+                        "position": {
+                            "h": 450,
+                            "w": 930,
+                            "x": 980,
+                            "y": 280
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "viz_ws8sjURt",
+                        "position": {
+                            "h": 450,
+                            "w": 940,
+                            "x": 20,
+                            "y": 280
+                        },
+                        "type": "block"
+                    }
+                ],
+                "type": "absolute"
+            }
+        },
+        "options": {},
+        "tabs": {
+            "items": [
+                {
+                    "label": "User Analytics",
+                    "layoutId": "layout_1"
+                }
+            ]
+        }
+    }
+}
+    ]]></definition>
+</dashboard>
