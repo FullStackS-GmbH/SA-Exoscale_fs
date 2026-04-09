@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="splunk-workflows" />
     <orderEntry type="module" module-name="temp" />
+    <orderEntry type="module" module-name="template-splunk-app_ucc" />
   </component>
 </module>
