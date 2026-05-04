@@ -255,6 +255,13 @@
 			},
 			"type": "splunk.rectangle"
 		},
+		"viz_8L7NqgoD": {
+			"options": {
+				"preserveAspectRatio": true,
+				"src": "splunk-enterprise-kvstore://69f8a725e6c22dff69093016"
+			},
+			"type": "splunk.image"
+		},
 		"viz_8gTTeTKD": {
 			"options": {
 				"fillColor": "transparent",
@@ -566,7 +573,7 @@
 								"token": "mod",
 								"value": "1"
 							},
-								{
+							{
 								"token": "usr",
 								"value": "0"
 							},
@@ -1116,9 +1123,9 @@
 				"backgroundColor": "transparent",
 				"nodeHeight": 35,
 				"nodeHighlightColor": "#62b3b2",
-				"nodeSpacingX": 120,
+				"nodeSpacingX": 100,
 				"nodeSpacingY": 15,
-				"nodeWidth": 220
+				"nodeWidth": 183
 			},
 			"type": "splunk.linkgraph"
 		},
@@ -1372,6 +1379,13 @@
 				"svg": "en-US/static/app/SA-Exoscale_fs/images/arrow.svg"
 			},
 			"type": "splunk.choropleth.svg"
+		},
+		"viz_eRQIZSwf": {
+			"type": "splunk.image",
+			"options": {
+				"preserveAspectRatio": true,
+				"src": "/en-US/static/app/SA-Exoscale_fs/images/PrimaryLogo.png"
+			}
 		}
 	},
 	"dataSources": {
@@ -1668,14 +1682,14 @@
 			"layout_PEiadEa4": {
 				"options": {
 					"backgroundColor": "transparent",
+					"height": 1110,
+					"width": 1920,
 					"backgroundImage": {
 						"sizeType": "contain",
-						"src": "splunk-enterprise-kvstore://69d781f295b30fca09053dae",
 						"x": 0,
-						"y": 0
-					},
-					"height": 1110,
-					"width": 1920
+						"y": 0,
+						"src": "/en-US/static/app/SA-Exoscale_fs/images/background.jpg"
+					}
 				},
 				"structure": [
 					{
@@ -1693,7 +1707,7 @@
 						"position": {
 							"h": 580,
 							"w": 290,
-							"x": 1590,
+							"x": 1610,
 							"y": 460
 						},
 						"type": "block"
@@ -1703,7 +1717,7 @@
 						"position": {
 							"h": 120,
 							"w": 130,
-							"x": 1670,
+							"x": 1690,
 							"y": 890
 						},
 						"type": "block"
@@ -1713,7 +1727,7 @@
 						"position": {
 							"h": 120,
 							"w": 130,
-							"x": 1670,
+							"x": 1690,
 							"y": 890
 						},
 						"type": "block"
@@ -1723,7 +1737,7 @@
 						"position": {
 							"h": 120,
 							"w": 130,
-							"x": 1670,
+							"x": 1690,
 							"y": 890
 						},
 						"type": "block"
@@ -1733,7 +1747,7 @@
 						"position": {
 							"h": 300,
 							"w": 300,
-							"x": 790,
+							"x": 760,
 							"y": 30
 						},
 						"type": "block"
@@ -1783,7 +1797,7 @@
 						"position": {
 							"h": 180,
 							"w": 220,
-							"x": 830,
+							"x": 800,
 							"y": 30
 						},
 						"type": "block"
@@ -1793,7 +1807,7 @@
 						"position": {
 							"h": 290,
 							"w": 380,
-							"x": 740,
+							"x": 710,
 							"y": 60
 						},
 						"type": "block"
@@ -1803,7 +1817,7 @@
 						"position": {
 							"h": 180,
 							"w": 220,
-							"x": 830,
+							"x": 800,
 							"y": 100
 						},
 						"type": "block"
@@ -1893,7 +1907,7 @@
 						"position": {
 							"h": 220,
 							"w": 590,
-							"x": 1200,
+							"x": 1170,
 							"y": 90
 						},
 						"type": "block"
@@ -1903,7 +1917,7 @@
 						"position": {
 							"h": 110,
 							"w": 290,
-							"x": 1350,
+							"x": 1320,
 							"y": 30
 						},
 						"type": "block"
@@ -1913,7 +1927,7 @@
 						"position": {
 							"h": 680,
 							"w": 350,
-							"x": 30,
+							"x": 20,
 							"y": 400
 						},
 						"type": "block"
@@ -1923,7 +1937,7 @@
 						"position": {
 							"h": 120,
 							"w": 240,
-							"x": 130,
+							"x": 120,
 							"y": 440
 						},
 						"type": "block"
@@ -1933,7 +1947,7 @@
 						"position": {
 							"h": 60,
 							"w": 280,
-							"x": 80,
+							"x": 70,
 							"y": 640
 						},
 						"type": "block"
@@ -1943,7 +1957,7 @@
 						"position": {
 							"h": 200,
 							"w": 210,
-							"x": 90,
+							"x": 80,
 							"y": 430
 						},
 						"type": "block"
@@ -1953,7 +1967,7 @@
 						"position": {
 							"h": 200,
 							"w": 210,
-							"x": 90,
+							"x": 80,
 							"y": 870
 						},
 						"type": "block"
@@ -1963,7 +1977,7 @@
 						"position": {
 							"h": 300,
 							"w": 270,
-							"x": 270,
+							"x": 240,
 							"y": 760
 						},
 						"type": "block"
@@ -1973,7 +1987,7 @@
 						"position": {
 							"h": 300,
 							"w": 270,
-							"x": 270,
+							"x": 240,
 							"y": 430
 						},
 						"type": "block"
@@ -1983,7 +1997,7 @@
 						"position": {
 							"h": 120,
 							"w": 130,
-							"x": 1670,
+							"x": 1690,
 							"y": 510
 						},
 						"type": "block"
@@ -1993,7 +2007,7 @@
 						"position": {
 							"h": 120,
 							"w": 130,
-							"x": 1670,
+							"x": 1690,
 							"y": 510
 						},
 						"type": "block"
@@ -2003,7 +2017,7 @@
 						"position": {
 							"h": 120,
 							"w": 130,
-							"x": 1670,
+							"x": 1690,
 							"y": 700
 						},
 						"type": "block"
@@ -2013,7 +2027,7 @@
 						"position": {
 							"h": 120,
 							"w": 130,
-							"x": 1670,
+							"x": 1690,
 							"y": 700
 						},
 						"type": "block"
@@ -2023,7 +2037,7 @@
 						"position": {
 							"h": 120,
 							"w": 130,
-							"x": 1670,
+							"x": 1690,
 							"y": 700
 						},
 						"type": "block"
@@ -2033,7 +2047,7 @@
 						"position": {
 							"h": 120,
 							"w": 130,
-							"x": 1670,
+							"x": 1690,
 							"y": 510
 						},
 						"type": "block"
@@ -2041,19 +2055,19 @@
 					{
 						"item": "viz_hMCTRge7",
 						"position": {
-							"h": 150,
+							"h": 170,
 							"w": 110,
-							"x": 1680,
-							"y": 500
+							"x": 1700,
+							"y": 490
 						},
 						"type": "block"
 					},
 					{
 						"item": "viz_AEmqhaSn",
 						"position": {
-							"h": 120,
-							"w": 80,
-							"x": 1690,
+							"h": 130,
+							"w": 90,
+							"x": 1710,
 							"y": 700
 						},
 						"type": "block"
@@ -2061,10 +2075,10 @@
 					{
 						"item": "viz_O6wLxFAw",
 						"position": {
-							"h": 130,
+							"h": 150,
 							"w": 110,
-							"x": 1680,
-							"y": 890
+							"x": 1700,
+							"y": 880
 						},
 						"type": "block"
 					},
@@ -2073,7 +2087,7 @@
 						"position": {
 							"h": 60,
 							"w": 280,
-							"x": 70,
+							"x": 60,
 							"y": 860
 						},
 						"type": "block"
@@ -2103,7 +2117,7 @@
 						"position": {
 							"h": 200,
 							"w": 210,
-							"x": 90,
+							"x": 80,
 							"y": 640
 						},
 						"type": "block"
@@ -2112,19 +2126,9 @@
 						"item": "viz_T3hqVldS",
 						"position": {
 							"h": 650,
-							"w": 1020,
-							"x": 530,
+							"w": 1090,
+							"x": 500,
 							"y": 420
-						},
-						"type": "block"
-					},
-					{
-						"item": "viz_ixcxS32O",
-						"position": {
-							"h": 630,
-							"w": 1000,
-							"x": 540,
-							"y": 430
 						},
 						"type": "block"
 					},
@@ -2133,7 +2137,7 @@
 						"position": {
 							"h": 50,
 							"w": 230,
-							"x": 1650,
+							"x": 1670,
 							"y": 470
 						},
 						"type": "block"
@@ -2143,7 +2147,7 @@
 						"position": {
 							"h": 50,
 							"w": 230,
-							"x": 1650,
+							"x": 1670,
 							"y": 850
 						},
 						"type": "block"
@@ -2153,7 +2157,7 @@
 						"position": {
 							"h": 50,
 							"w": 230,
-							"x": 1650,
+							"x": 1670,
 							"y": 660
 						},
 						"type": "block"
@@ -2194,7 +2198,7 @@
 							"h": 630,
 							"w": 940,
 							"x": 560,
-							"y": 430
+							"y": 440
 						},
 						"type": "block"
 					},
@@ -2203,7 +2207,7 @@
 						"position": {
 							"h": 180,
 							"w": 220,
-							"x": 830,
+							"x": 800,
 							"y": 130
 						},
 						"type": "block"
@@ -2213,7 +2217,7 @@
 						"position": {
 							"h": 180,
 							"w": 220,
-							"x": 830,
+							"x": 800,
 							"y": 160
 						},
 						"type": "block"
@@ -2223,7 +2227,7 @@
 						"position": {
 							"h": 180,
 							"w": 220,
-							"x": 830,
+							"x": 800,
 							"y": 190
 						},
 						"type": "block"
@@ -2233,10 +2237,40 @@
 						"position": {
 							"h": 180,
 							"w": 220,
-							"x": 830,
+							"x": 800,
 							"y": 60
 						},
 						"type": "block"
+					},
+					{
+						"item": "viz_ixcxS32O",
+						"position": {
+							"h": 630,
+							"w": 1080,
+							"x": 500,
+							"y": 420
+						},
+						"type": "block"
+					},
+					{
+						"item": "viz_8L7NqgoD",
+						"position": {
+							"h": 210,
+							"w": 240,
+							"x": 1690,
+							"y": -60
+						},
+						"type": "block"
+					},
+					{
+						"item": "viz_eRQIZSwf",
+						"type": "block",
+						"position": {
+							"x": 1710,
+							"y": -50,
+							"w": 220,
+							"h": 190
+						}
 					}
 				],
 				"type": "absolute"
