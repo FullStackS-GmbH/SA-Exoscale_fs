@@ -1,8 +1,7 @@
 <?xml version="1.0" ?>
 <nav>
+    <view name="exoscale_data_overview" default="true"/>
     <view name="inputs"/>
-    <view name="configuration" default="true"/>
-    <view name="dashboard"/>
-    <view name="exoscale_data_overview"/>
+    <view name="configuration"/>
     <view name="search"/>
 </nav>
