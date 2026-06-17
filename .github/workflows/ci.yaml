@@ -1,0 +1,24 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  semver:
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/semver.yaml@v1.2.1
+
+  build:
+    needs: semver
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/build.yaml@v1.2.1
+    with:
+      version: ${{ needs.semver.outputs.version }}
+      artifact_addon_name: ${{ vars.ADDON_NAME }}
+      artifact_report_name: appinspect.txt
+
+  release:
+    needs: [semver, build]
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/release.yaml@v1.2.1
+    with:
+      version: ${{ needs.semver.outputs.version }}
