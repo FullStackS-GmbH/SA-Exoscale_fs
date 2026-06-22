@@ -7,7 +7,7 @@ requires-python = ">=3.9"
 dependencies = [
     "exoscale>=0.16.3",
     "solnlib>=8.1.0",
-    "splunk-sdk>=3.0.0",
+    "splunk-sdk>=2.1.1",
     "splunktaucclib>=8.2.0",
 ]
 
