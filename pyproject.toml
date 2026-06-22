@@ -3,22 +3,22 @@ name = "SA-Exoscale_fs"
 version = "0.1.0"
 description = "FULLSTACKS Add-on for Exoscale"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.13"
 dependencies = [
-    "exoscale>=0.16.1",
-    "solnlib>=7.0.0",
-    "splunk-sdk>=2.1.1",
-    "splunktaucclib>=8.1.0",
+    "exoscale>=0.16.3",
+    "solnlib>=8.1.0",
+    "splunk-sdk>=3.0.0",
+    "splunktaucclib>=8.2.0",
 ]
 
 [dependency-groups]
 dev = [
-    "pre-commit>=4.3.0",
-    "ruff>=0.15.1",
-    "splunk-add-on-ucc-framework[validate]>=6.1.0",
-    "pip>=26.0.1",
-    "pytest>=8.4.2",
-    "yamllint>=1.37.1",
+    "pre-commit>=4.6.0",
+    "ruff>=0.15.7",
+    "splunk-add-on-ucc-framework[validate]>=6.5",
+    "pip>=26.1.2",
+    "pytest>=9.1.0",
+    "yamllint>=1.38.0",
 ]
 
 [pytest]
