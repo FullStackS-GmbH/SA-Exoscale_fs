@@ -3,7 +3,7 @@ name = "SA-Exoscale_fs"
 version = "0.1.0"
 description = "FULLSTACKS Add-on for Exoscale"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.9"
 dependencies = [
     "exoscale>=0.16.3",
     "solnlib>=8.1.0",
