@@ -9,9 +9,9 @@
         },
         "author": [
             {
-                "name": "",
-                "email": null,
-                "company": null
+                "name": "FULLSTACKS GmbH",
+                "email": "support@fullstacks.io",
+                "company": "FULLSTACKS GmbH"
             }
         ],
         "releaseDate": null,
