@@ -8,7 +8,7 @@ If you believe you've found a security vulnerability, please follow these steps 
 ### Direct Reporting Process
 
 1. **Do not disclose the vulnerability publicly** until it has been addressed by the maintainers.
-2. **Send details of the vulnerability** to [engineering@fullstacks.eu](mailto:engineering@fullstacks.eu) with the following
+2. **Send details of the vulnerability** to [splunkbase@fullstacks.io](mailto:splunkbase@fullstacks.io) with the following
    information:
     - A clear description of the vulnerability
     - Steps to reproduce the issue
