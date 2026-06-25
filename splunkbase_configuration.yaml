@@ -5,4 +5,4 @@ splunkbase:
     cim-version:
       - 8.x
       - 6.x
-    make-visible: 1
+    make-visible: 0
