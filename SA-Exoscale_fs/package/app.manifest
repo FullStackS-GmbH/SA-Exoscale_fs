@@ -5,7 +5,7 @@
         "id": {
             "group": null,
             "name": "SA-Exoscale_fs",
-            "version": "0.0.1"
+            "version": "0.0.0"
         },
         "author": [
             {
