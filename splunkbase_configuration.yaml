@@ -1,0 +1,8 @@
+splunkbase:
+  - app_id: 8616
+    splunk-version:
+      - 10.4
+    cim-version:
+      - 8.x
+      - 6.x
+    make-visible: 1
