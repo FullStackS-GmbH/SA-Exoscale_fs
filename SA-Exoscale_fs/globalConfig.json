@@ -280,6 +280,8 @@
             "light",
             "dark"
         ],
-        "supportedPythonVersion": "3.13"
+        "supportedPythonVersion": [
+         "3.13"
+        ]
     }
 }
