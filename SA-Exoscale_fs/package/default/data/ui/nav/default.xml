@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
-<nav>
-    <view name="exoscale_data_overview" default="true"/>
-    <view name="inputs"/>
-    <view name="configuration"/>
+<nav color="transparent">
+    <view name="exoscale_data_overview" default="true" icon="chartpanels"/>
+    <view name="inputs" icon="cylinderindex"/>
+    <view name="configuration" icon="cog"/>
     <view name="search"/>
 </nav>

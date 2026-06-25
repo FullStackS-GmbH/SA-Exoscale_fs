@@ -279,6 +279,9 @@
         "supportedThemes": [
             "light",
             "dark"
+        ],
+        "supportedPythonVersion": [
+         "3.13"
         ]
     }
 }
