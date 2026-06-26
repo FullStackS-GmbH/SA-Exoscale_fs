@@ -40,3 +40,4 @@ jobs:
     with:
       VERSION: ${{ needs.semver.outputs.version }}
       environment: FS Splunk Prod
+    secrets: inherit
