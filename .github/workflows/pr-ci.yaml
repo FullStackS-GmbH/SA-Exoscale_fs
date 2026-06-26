@@ -1,13 +1,11 @@
-name: PR Preview (draft release)
+name: PR Preview (artifact)
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [main]
 
-permissions:
-  contents: write   # needed to create/update releases
-  pull-requests: write
+permissions: {}
 
 concurrency:
   group: pr-preview-${{ github.event.pull_request.number }}
@@ -15,36 +13,29 @@ concurrency:
 
 jobs:
   semver:
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/semver.yaml@v1.4.0
+    permissions:
+      contents: read
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/semver_pr.yaml@v1.5.1
     with:
-      mode: pr
       pr_number: ${{ github.event.pull_request.number }}
       sha: ${{ github.sha }}
 
   build:
     needs: semver
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/build.yaml@v1.4.0
+    permissions:
+      contents: read
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/build.yaml@v1.5.1
     with:
       version: ${{ needs.semver.outputs.version }}
       artifact_report_name: ${{ vars.REPORT_NAME }}
 
-  release:
-    needs: [semver, build]
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/release.yaml@v1.4.0
+  pr_artifact_comment:
+    needs: [ semver, build ]
+    permissions:
+      pull-requests: write
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/pr_artifact_comment.yaml@v1.5.1
     with:
-      version: ${{ needs.semver.outputs.version }}
-      draft: true
-      prerelease: true
-      # optional but recommended so each PR has a stable tag:
-      tag: pr-${{ github.event.pull_request.number }}
-      target_commitish: ${{ github.sha }}
-      mode: pr
-
-  pr_release_comment:
-    needs: [ semver, build, release ]
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/pr_release_comment.yaml@v1.4.0
-    with:
-      tag: pr-${{ github.event.pull_request.number }}
       version: ${{ needs.semver.outputs.version }}
       pr_number: ${{ github.event.pull_request.number }}
-      url: ${{ needs.release.outputs.url }}
+      artifact_url: ${{ needs.build.outputs.artifact_url }}
+      artifact_digest: ${{ needs.build.outputs.artifact_digest }}
