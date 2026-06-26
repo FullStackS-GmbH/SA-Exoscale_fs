@@ -1,0 +1,45 @@
+version: 2
+project_name: sa-exoscale-fs
+
+builds:
+  - skip: true
+
+checksum:
+  disable: true
+
+release:
+  target_commitish: "{{ .Commit }}"
+  name_template: "{{ .Tag }}"
+  mode: replace
+  replace_existing_artifacts: true
+  header: |
+    ## {{ .Version }} ({{ .Now.Format "2006-01-02" }})
+  extra_files:
+    - glob: ./release-assets/output/*.tar.gz
+    - glob: ./release-assets/appinspect.txt
+
+changelog:
+  use: git
+  sort: asc
+  abbrev: 8
+  format: '{{ replace (replace (replace (replace .Message "feat: " "") "fix: " "") "feat!: " "") "fix!: " "" }} ({{ .SHA }})'
+  groups:
+    - title: Feature
+      regexp: "^.*?feat(\\([[:word:]-]+\\))??!?:.+$"
+      order: 0
+    - title: Bug Fixes
+      regexp: "^.*?fix(\\([[:word:]-]+\\))??!?:.+$"
+      order: 1
+    - title: Others
+      order: 999
+  filters:
+    exclude:
+      - "^.*?Merge pull request"
+      - "^.*?Merge branch"
+      - "^.*?chore(\\([[:word:]-]+\\))??!?:"
+      - "^.*?ci(\\([[:word:]-]+\\))??!?:"
+      - "^.*?docs(\\([[:word:]-]+\\))??!?:"
+      - "^.*?test(\\([[:word:]-]+\\))??!?:"
+      - "^.*?style(\\([[:word:]-]+\\))??!?:"
+      - "^.*?refactor(\\([[:word:]-]+\\))??!?:"
+      - "^.*?build(\\([[:word:]-]+\\))??!?:"

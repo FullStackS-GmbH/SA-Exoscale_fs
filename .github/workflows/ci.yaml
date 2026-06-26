@@ -11,13 +11,13 @@ jobs:
   semver:
     permissions:
       contents: read
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/semver.yaml@v1.5.3
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/semver.yaml@v1.5.4
 
   build:
     needs: semver
     permissions:
       contents: read
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/build.yaml@v1.5.3
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/build.yaml@v1.5.4
     with:
       version: ${{ needs.semver.outputs.version }}
       artifact_report_name: appinspect.txt
@@ -27,7 +27,7 @@ jobs:
     permissions:
       actions: read
       contents: write
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/release.yaml@v1.5.3
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/release.yaml@v1.5.4
     with:
       version: ${{ needs.semver.outputs.version }}
 
@@ -36,7 +36,7 @@ jobs:
     permissions:
       actions: read
       contents: read
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/publish.yaml@v1.5.3
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/publish.yaml@v1.5.4
     with:
       VERSION: ${{ needs.semver.outputs.version }}
       environment: FS Splunk Prod
