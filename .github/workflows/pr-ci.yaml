@@ -15,7 +15,7 @@ jobs:
   semver:
     permissions:
       contents: read
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/semver_pr.yaml@v1.5.0
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/semver_pr.yaml@v1.5.1
     with:
       pr_number: ${{ github.event.pull_request.number }}
       sha: ${{ github.sha }}
@@ -24,7 +24,7 @@ jobs:
     needs: semver
     permissions:
       contents: read
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/build.yaml@v1.5.0
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/build.yaml@v1.5.1
     with:
       version: ${{ needs.semver.outputs.version }}
       artifact_report_name: ${{ vars.REPORT_NAME }}
@@ -32,8 +32,8 @@ jobs:
   pr_artifact_comment:
     needs: [ semver, build ]
     permissions:
-      issues: write
-    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/pr_artifact_comment.yaml@v1.5.0
+      pull-requests: write
+    uses: FullStackS-GmbH/splunk-workflows/.github/workflows/pr_artifact_comment.yaml@v1.5.1
     with:
       version: ${{ needs.semver.outputs.version }}
       pr_number: ${{ github.event.pull_request.number }}
