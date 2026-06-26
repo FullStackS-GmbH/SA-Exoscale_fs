@@ -3,9 +3,9 @@
 `SA-Exoscale_fs` is a Splunk add-on for collecting Exoscale audit-trail events and normalizing them into CIM-oriented sourcetypes for security and compliance use cases.
 
 <!-- Badges -->
-![Build](https://img.shields.io/github/actions/workflow/status/fullstacks-gmbh/sa-exoscale_fs/ci.yml?branch=main)
+![Build](https://img.shields.io/github/actions/workflow/status/FullStackS-GmbH/SA-Exoscale_fs/ci.yaml)
 ![Release](https://img.shields.io/github/v/release/fullstacks-gmbh/sa-exoscale_fs)
-![License](https://img.shields.io/github/license/fullstacks-gmbh/sa-exoscale_fs)
+![GitHub License](https://img.shields.io/github/license/FullStackS-GmbH/SA-Exoscale_fs)
 
 ---
 
